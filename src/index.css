@@ -1,0 +1,26 @@
+/* CHARACTER CARD CSS */
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  animation: blink 1.5s infinite;
+}
+
+.status-green {
+  background-color: #00ff9f;
+}
+
+.status-red {
+  background-color: #ff4c4c;
+}
+
+.status-orange {
+  background-color: #ffa500;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

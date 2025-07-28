@@ -1,16 +1,32 @@
-import rigoImageUrl from "../assets/img/rigo-baby.jpg";
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { useEffect, useState } from "react";
+import { CharacterCard } from "./CharacterCard";
 
 export const Home = () => {
+  const [characters, setCharacters] = useState([]);
 
-  const {store, dispatch} =useGlobalReducer()
+  useEffect(() => {
+    const dummyCharacters = Array.from({ length: 8 }).map((_, index) => ({
+      id: index + 1,
+      name: `Personaje ${index + 1}`,
+      status: ["Alive", "Dead", "unknown"][index % 3],
+      location: { name: `Planeta ${index + 1}` },
+      episode: new Array((index % 5) + 1).fill("episode"),
+      image: `https://rickandmortyapi.com/api/character/avatar/${(index % 671) + 1}.jpeg`,
+    }));
 
-	return (
-		<div className="text-center mt-5">
-			<h1>Hello Rigo!!</h1>
-			<p>
-				<img src={rigoImageUrl} />
-			</p>
-		</div>
-	);
-}; 
+    setCharacters(dummyCharacters);
+  }, []);
+
+  return (
+    <div className="container mt-4">
+      <h1 className="mb-4 text-warning">Random Characters</h1>
+      <div className="row">
+        {characters.map((character) => (
+          <div key={character.id} className="col-sm-6 col-md-4 col-lg-3 mb-4">
+            <CharacterCard character={character} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

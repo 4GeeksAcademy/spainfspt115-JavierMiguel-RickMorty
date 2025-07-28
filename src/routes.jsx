@@ -9,6 +9,10 @@ import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
+import { CharacterPage } from "./pages/CharacterPage";
+import { Episodes } from "./pages/Episodes";
+import { Locations } from "./pages/Locations";
+
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
