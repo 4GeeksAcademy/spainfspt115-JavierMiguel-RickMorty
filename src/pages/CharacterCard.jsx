@@ -25,7 +25,7 @@ export const CharacterCard = ({ character }) => {
       <div className="position-absolute bottom-0 end-0 m-2">
         <span className="badge bg-secondary">{character.episode.length} eps</span>
       </div>
-      
+
       <Link
         to={`/character/${character.id}`}
         state={{ character }}

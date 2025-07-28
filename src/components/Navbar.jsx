@@ -64,9 +64,8 @@ export const Navbar = () => {
               ❤️ Favorites
             </button>
             <ul
-              className={`dropdown-menu dropdown-menu-end bg-dark text-light mt-2 ${
-                openDropdown ? "show" : ""
-              }`}
+              className={`dropdown-menu dropdown-menu-end bg-dark text-light mt-2 ${openDropdown ? "show" : ""
+                }`}
               aria-labelledby="favoritesDropdown"
             >
               <li className="dropdown-item text-light">
