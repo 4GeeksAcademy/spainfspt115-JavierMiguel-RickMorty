@@ -1,49 +1,87 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import useGlobalReducer from "../hooks/useGlobalReducer";
+import { fetchCharactersByIds } from "../services/ApiService";
+import { CharacterCard } from "./CharacterCard";
 
 export const Episodes = () => {
-    const [episodesBySeason, setEpisodesBySeason] = useState({});
+  const { store } = useGlobalReducer();
+  const { seasonCode } = useParams();
 
-    useEffect(() => {
+  const [expandedEpisodes, setExpandedEpisodes] = useState({});
+  const [episodeCharacters, setEpisodeCharacters] = useState({});
+  const [loadingEpisodes, setLoadingEpisodes] = useState({});
 
-        const dummyEpisodes = Array.from({ length: 31 }).map((_, index) => {
-            const season = index < 11 ? "S01" : index < 21 ? "S02" : "S03";
-            const number = (index % 10) + 1;
-            return {
-                id: index + 1,
-                name: `Episode ${index + 1}`,
-                episode: `${season}E${number.toString().padStart(2, "0")}`,
-            };
-        });
+  const episodes = store.episodes
+    .filter((episode) => episode.episode.startsWith(seasonCode))
+    .sort((firstEpi, secondEpi) => firstEpi.episode.localeCompare(secondEpi.episode));
 
-        const grouped = dummyEpisodes.reduce((ssList, epi) => {
-            const seasonCode = epi.episode.slice(0, 3); // "S01"
-            if (!ssList[seasonCode]) ssList[seasonCode] = [];
-            ssList[seasonCode].push(epi);
-            return ssList;
-        }, {});
+  const toggleEpisode = async (episode) => {
+    setExpandedEpisodes((prev) => ({
+      ...prev,
+      [episode.id]: !prev[episode.id],
+    }));
 
-        setEpisodesBySeason(grouped);
-    }, []);
+    const shouldExpand = !expandedEpisodes[episode.id];
 
-    return (
-        <div className="container mt-4">
-            <h1 className="mb-3 text-warning">Seasons</h1>
-            <div className="row">
-                {Object.entries(episodesBySeason).map(([seasonCode, episodes]) => (
-                    <div key={seasonCode} className="col-md-6 col-lg-4 mb-3">
-                        <div className="card bg-dark text-light border-info shadow-sm p-3 h-100">
-                            <h5 className="card-title text-info">
-                                Season {parseInt(seasonCode.slice(1))}
-                            </h5>
-                            <p className="card-text">{episodes.length} episodes</p>
-                            <Link to={`/season/${seasonCode}`} className="btn btn-outline-info mt-auto">
-                                View Episodes
-                            </Link>
-                        </div>
+    if (shouldExpand && !episodeCharacters[episode.id]) {
+      setLoadingEpisodes((prev) => ({ ...prev, [episode.id]: true }));
+
+      const charIds = episode.characters.map((url) => url.split("/").pop());
+      const chars = await fetchCharactersByIds(charIds);
+
+      setEpisodeCharacters((prev) => ({ ...prev, [episode.id]: chars }));
+      setLoadingEpisodes((prev) => ({ ...prev, [episode.id]: false }));
+    }
+  };
+
+  return (
+    <div className="container mt-4">
+      <h1 className="mb-4 text-warning">
+        Season {parseInt(seasonCode.slice(1))} – Episodes
+      </h1>
+
+      {episodes.map((episode) => (
+        <div
+          key={episode.id}
+          className="card bg-dark text-light border-info mb-3 shadow-sm"
+        >
+          <div
+            className="card-body"
+            style={{ cursor: "pointer" }}
+            onClick={() => toggleEpisode(episode)}
+          >
+            <h5 className="card-title">
+              {episode.name} <small>({episode.episode})</small>
+            </h5>
+            <p className="card-text">{episode.air_date}</p>
+            <small>
+              {expandedEpisodes[episode.id]
+                ? "▼ Hide Characters"
+                : "▶ Show Characters"}
+            </small>
+          </div>
+
+          {expandedEpisodes[episode.id] && (
+            <div className="card-body bg-secondary">
+              {loadingEpisodes[episode.id] ? (
+                <p className="text-light">Loading characters...</p>
+              ) : (
+                <div className="row">
+                  {episodeCharacters[episode.id]?.map((char) => (
+                    <div
+                      className="col-6 col-md-4 col-lg-3 mb-3"
+                      key={char.id}
+                    >
+                      <CharacterCard character={char} />
                     </div>
-                ))}
+                  ))}
+                </div>
+              )}
             </div>
+          )}
         </div>
-    );
+      ))}
+    </div>
+  );
 };

@@ -12,7 +12,7 @@ import { Demo } from "./pages/Demo";
 import { CharacterPage } from "./pages/CharacterPage";
 import { Episodes } from "./pages/Episodes";
 import { Locations } from "./pages/Locations";
-import { SeasonPage } from "./pages/SeasonPage";
+import { SeasonsPage } from "./pages/SeasonsPage";
 import { LocationPage } from "./pages/LocationPage";
 
 
@@ -30,8 +30,8 @@ export const router = createBrowserRouter(
       {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
       <Route path="/" element={<Home />} />
       <Route path="/character/:id" element={< CharacterPage />} />
-      <Route path="/episodes" element={< Episodes />} />
-      <Route path="/season/:seasonCode" element={< SeasonPage />} />
+      <Route path="/seasons/:seasonCode/episodes" element={< Episodes />} />
+      <Route path="/seasons" element={< SeasonsPage />} />
       <Route path="/locations" element={< Locations />} />
       <Route path="/location/:locationId" element={< LocationPage />} />
 
