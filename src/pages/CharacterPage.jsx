@@ -33,10 +33,13 @@ export const CharacterPage = () => {
   };
 
   const getStatusColor = (status) => {
-    if (status === "Alive") return "status-green";
-    if (status === "Dead") return "status-red";
-    return "status-orange";
+    return status === "Alive"
+      ? "status-green"
+      : status === "Dead"
+        ? "status-red"
+        : "status-orange";
   };
+
 
   return (
     <div className="container mt-4">
